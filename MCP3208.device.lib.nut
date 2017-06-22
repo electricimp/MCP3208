@@ -36,10 +36,6 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-	const MCP3208_STARTBIT      = 0x10;
-	const MCP3208_SINGLE_ENDED  = 0x08;
-	const MCP3208_DIFF_MODE     = 0x00;
-
 	const MCP3208_CHANNEL_0     = 0x00;
 	const MCP3208_CHANNEL_1     = 0x01;
 	const MCP3208_CHANNEL_2     = 0x02;
@@ -49,7 +45,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 	const MCP3208_CHANNEL_6     = 0x06;
 	const MCP3208_CHANNEL_7     = 0x07;
 	
-	const MCP_3208_ADC_MAX 		= 4095.0;
+	const MCP3208_ADC_MAX 		= 4095.0;
 
 class MCP3208 {
 
@@ -86,7 +82,7 @@ class MCP3208 {
     	csHigh();
 
     	// Extract reading as volts
-    	return ((((read[1] & 0x0f) << 8) | read[2]) / MCP_3208_ADC_MAX) * _vref;
+    	return ((((read[1] & 0x0f) << 8) | read[2]) / MCP3208_ADC_MAX) * _vref;
 	}
 	function readDifferential(in_minus, in_plus) {
 		csLow();
@@ -105,7 +101,7 @@ class MCP3208 {
 		csHigh();
 		
 		// Extract reading as volts 
-		return ((((read[1] & 0x0f) << 8) | read[2]) / MCP_3208_ADC_MAX) * _vref;
+		return ((((read[1] & 0x0f) << 8) | read[2]) / MCP3208_ADC_MAX) * _vref;
 
 	}
 	
