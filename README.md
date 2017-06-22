@@ -36,5 +36,8 @@ channels 2 and 3, channels 4 and 5, or channels 6 and 7.
 ```
 difference <- adc.readDifferential(0, 1);
 ```
+## Datasheet
+[Datasheet](http://ww1.microchip.com/downloads/en/DeviceDoc/21298c.pdf)
 
-[License](https://github.com/electricimp/MCP3208/blob/develop/LICENSE)
+## License
+The MCP3208 library is licensed under the [MIT License](https://github.com/electricimp/MCP3208/blob/develop/LICENSE)
