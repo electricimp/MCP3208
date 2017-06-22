@@ -36,3 +36,5 @@ channels 2 and 3, channels 4 and 5, or channels 6 and 7.
 ```
 difference <- adc.readDifferential(0, 1);
 ```
+
+[License](https://github.com/electricimp/MCP3208/blob/develop/LICENSE)
