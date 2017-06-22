@@ -2,12 +2,12 @@
 This library provides driver code for Microchip's MCP3208 8-Channel 12-Bit A/D Converter with SPI Interface.
 
 # Class Usage
-## Constructor: MCP3208(spiPin, vref[,cs])
-The constructor takes two required parameters: spi, the spi module that the chip is connected to, and
-vref, the voltage reference to the ADC. The spi module MUST be pre-configured before being passed to
-the constructor. The optional third argument, cs, is the chip select pin being used. If it is not 
-passed to the constructor, it is assumed you are using an imp with a dedicated chip select pin for
-the spi module you have passed.
+## Constructor: MCP3208(*spiPin*, *vref*[,*cs*])
+The constructor takes two required parameters: *spiPin*, the spi module that the chip is connected to, and
+*vref*, the voltage reference to the ADC. This voltage reference can be set by putting the desired voltage at the
+vref pin of the device. The spi module MUST be pre-configured before being passed to the constructor. 
+The optional third argument, *cs*, is the chip select pin being used. If it is not passed to the constructor,
+it is assumed you are using an imp with a dedicated chip select pin for the spi module you have passed.
 
 #### Example
 ```
@@ -18,13 +18,15 @@ adc <- MCP3208(spiModule, 3.3);
 ```
 
 # Class Methods
-## readADC(channel)
-The method readADC(channel) will return the voltage on the ADC channel you pass to the method, calculated
-using the vref you supplied to the constructor.
+## readADC(*channel*)
+The method readADC(*channel*) will return the voltage on the ADC channel you pass to the method, calculated
+using the vref you supplied to the constructor. The channel should be an integer 0-7 corresponding
+to the channel on the device you are taking measurements from. There are constants that you may use provided
+with this library (e.g. MCP3208_CHANNEL_1)
 
 #### Example
 ```
-reading <- adc.readADC(1);
+reading <- adc.readADC(MCP3208_CHANNEL_1);
 ```
 
 ## readDifferential(in_minus, in_plus)
@@ -34,7 +36,7 @@ channels 2 and 3, channels 4 and 5, or channels 6 and 7.
 
 #### Example
 ```
-difference <- adc.readDifferential(0, 1);
+difference <- adc.readDifferential(MCP3208_CHANNEL_0, MCP3208_CHANNEL_1);
 ```
 ## Datasheet
 [Datasheet](http://ww1.microchip.com/downloads/en/DeviceDoc/21298c.pdf)
