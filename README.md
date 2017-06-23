@@ -1,8 +1,10 @@
 # MCP3208
 This library provides driver code for Microchip's MCP3208 8-Channel 12-Bit A/D Converter with SPI Interface.
 
+**To add this library to your project, add #require "MCP3208.device.lib.nut:1.0.0" to the top of your device code**
+
 # Class Usage
-## Constructor: MCP3208(*spiPin*, *vref*[,*cs*])
+## Constructor: MCP3208(*spiPin, vref[, cs]*)
 The constructor takes two required parameters: *spiPin*, the spi module that the chip is connected to, and
 *vref*, the voltage reference to the ADC. This voltage reference can be set by putting the desired voltage at the
 vref pin of the device. The spi module MUST be pre-configured before being passed to the constructor. 
@@ -11,7 +13,7 @@ it is assumed you are using an imp with a dedicated chip select pin for the spi 
 
 #### Example
 ```
-spiModule <- hardware.spiBCAD;
+spiModule <- hardware.spi0;
 spiModule.configure(CLOCK_IDLE_LOW | MSB_FIRST | USE_CS_L, 50);
 
 adc <- MCP3208(spiModule, 3.3);
@@ -29,9 +31,9 @@ with this library (e.g. MCP3208_CHANNEL_1)
 reading <- adc.readADC(MCP3208_CHANNEL_1);
 ```
 
-## readDifferential(in_minus, in_plus)
+## readDifferential(*in_minus, in_plus*)
 The method readDifferential(in_minus, in_plus) will return the voltage difference between the voltage at
-channel in_plus and channel in_minus. in_minus and in_plus must be a valid pair: channels 0 and 1, 
+channel *in_plus* and channel *in_minus*. *in_minus* and *in_plus* must be a valid pair: channels 0 and 1, 
 channels 2 and 3, channels 4 and 5, or channels 6 and 7.
 
 #### Example
@@ -42,4 +44,4 @@ difference <- adc.readDifferential(MCP3208_CHANNEL_0, MCP3208_CHANNEL_1);
 [Datasheet](http://ww1.microchip.com/downloads/en/DeviceDoc/21298c.pdf)
 
 ## License
-The MCP3208 library is licensed under the [MIT License](https://github.com/electricimp/MCP3208/blob/develop/LICENSE)
+The MCP3208 library is licensed under the [MIT License](./LICENSE)
