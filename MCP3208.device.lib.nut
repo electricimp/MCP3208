@@ -65,7 +65,7 @@ class MCP3208 {
 	}
 	
 	function readADC(channel) {
-		csLow();
+		_csLow();
 		
     		// 3 byte command
     		local sent = blob();
@@ -76,14 +76,15 @@ class MCP3208 {
         
     		local read = _spiPin.writeread(sent);
 
-    		csHigh();
+    		
+			_csHigh();
 
     		// Extract reading as volts
     		return ((((read[1] & 0x0f) << 8) | read[2]) / MCP3208_ADC_MAX) * _vref;
 	}
 	
 	function readDifferential(in_minus, in_plus) {
-		csLow();
+		_csLow();
 	    
 		local select = in_plus; // datasheet
 		
@@ -96,7 +97,7 @@ class MCP3208 {
 	    
 		local read = _spiPin.writeread(sent);
 		
-		csHigh();
+		_csHigh();
 		
 		// Extract reading as volts 
 		return ((((read[1] & 0x0f) << 8) | read[2]) / MCP3208_ADC_MAX) * _vref;
