@@ -74,8 +74,8 @@ class MCP3208 {
         sent.writen(0, 'b');
         
         local read = _spiPin.writeread(sent);
-    		
-			  _csHigh();
+        	
+        _csHigh();
       
         // Extract reading as volts
         return ((((read[1] & 0x0f) << 8) | read[2]) / MCP3208_ADC_MAX) * _vref;
