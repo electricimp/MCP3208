@@ -53,14 +53,14 @@ class MCP3208 {
     _vref = null;
 	
     function constructor(spiPin, vref, cs=null) { 
-	    this._spiPin = spiPin; // assume it's already been configured 
-        this._vref = vref;
-        this._csPin = cs;
+        _spiPin = spiPin; // assume it's already been configured 
+        _vref = vref;
+        _csPin = cs;
 
         if (_csPin) {
             _csPin.configure(DIGITAL_OUT, 1);
         }
-	  }
+    }
 	
 
     function readADC(channel) {
@@ -78,10 +78,10 @@ class MCP3208 {
         _csHigh();
       
         // Extract reading as volts
-        return ((((read[1] & 0x0f) << 8) | read[2]) / MCP3208_ADC_MAX) * _vref;
-	  }
+        return ((((read[1] & 0x0F) << 8) | read[2]) / MCP3208_ADC_MAX) * _vref;
+    }
 	
-	  function readDifferential(in_minus, in_plus) {
+    function readDifferential(in_minus, in_plus) {
         _csLow();
       
         local select = in_plus; // datasheet
@@ -98,11 +98,11 @@ class MCP3208 {
         _csHigh();
 
         // Extract reading as volts 
-        return ((((read[1] & 0x0f) << 8) | read[2]) / MCP3208_ADC_MAX) * _vref;
+        return ((((read[1] & 0x0F) << 8) | read[2]) / MCP3208_ADC_MAX) * _vref;
     }
 	
     function _csLow() {
-        if(_csPin == null) { 
+        if (_csPin == null) { 
             // if no cs was passed, assume there is a hardware cs pin
             _spiPin.chipselect(1);
         } else {
@@ -111,7 +111,7 @@ class MCP3208 {
     }
 	
     function _csHigh() {
-        if(_csPin == null) {
+        if (_csPin == null) {
             _spiPin.chipselect(0);
         } else {
             _csPin.write(1);
