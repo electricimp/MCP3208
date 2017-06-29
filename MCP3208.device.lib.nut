@@ -60,8 +60,9 @@ class MCP3208 {
         if (_csPin) {
             _csPin.configure(DIGITAL_OUT, 1);
         }
-	}
+	  }
 	
+
     function readADC(channel) {
         _csLow();
 		
@@ -73,16 +74,16 @@ class MCP3208 {
         sent.writen(0, 'b');
         
         local read = _spiPin.writeread(sent);
-
-        _csHigh();
-
+    		
+			  _csHigh();
+      
         // Extract reading as volts
         return ((((read[1] & 0x0f) << 8) | read[2]) / MCP3208_ADC_MAX) * _vref;
-	}
+	  }
 	
-	function readDifferential(in_minus, in_plus) {
+	  function readDifferential(in_minus, in_plus) {
         _csLow();
-	    
+      
         local select = in_plus; // datasheet
 		
         // 3 byte command 
@@ -93,9 +94,9 @@ class MCP3208 {
         sent.writen(0, 'b');
 	    
         local read = _spiPin.writeread(sent);
-		
+      
         _csHigh();
-		
+
         // Extract reading as volts 
         return ((((read[1] & 0x0f) << 8) | read[2]) / MCP3208_ADC_MAX) * _vref;
     }
