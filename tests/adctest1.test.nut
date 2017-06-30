@@ -25,8 +25,6 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ***/
 
-@include "MCP3208.device.lib.nut"
-
 class MyTestCase extends ImpTestCase {
     
     _adc = null;
