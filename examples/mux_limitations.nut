@@ -19,3 +19,5 @@ function fastSwitch(delayTime, vref, adc) {
         server.log(format("received %f on ch0 and %f on ch1", ch0, ch1));
     }
 }
+
+testFastChannelSwitch();
