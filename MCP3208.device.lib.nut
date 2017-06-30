@@ -68,7 +68,8 @@ class MCP3208 {
 		
         // 3 byte command
         local sent = blob();
-        // for single, bit after start bit is a 1
+        // Need to write a start bit as well as a bit following the start bit
+	// to indicate single mode. Thus, we write 0x06
         sent.writen(0x06 | (channel >> 2), 'b'); 
         sent.writen((channel << 6) & 0xFF, 'b');
         sent.writen(0, 'b');
@@ -88,7 +89,7 @@ class MCP3208 {
 		
         // 3 byte command 
         local sent = blob();
-        // for differential, bit after start bit is a 0
+        // for differential, bit after start bit is a 0, so we write 0x04
         sent.writen(0x04 | (select >> 2), 'b'); 
         sent.writen((select << 6) & 0xFF, 'b');
         sent.writen(0, 'b');
