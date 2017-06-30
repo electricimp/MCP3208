@@ -46,77 +46,76 @@ const MCP3208_ADC_MAX 	    = 4095.0;
 
 class MCP3208 {
 
-	static VERSION = "1.0.0";
+    static VERSION = "1.0.0";
 	
-	_spiPin = null;
-	_csPin = null;
-	_vref = null;
+    _spiPin = null;
+    _csPin = null;
+    _vref = null;
 	
-	function constructor(spiPin, vref, cs=null) { 
-		this._spiPin = spiPin; // assume it's already been configured 
-		
-		this._csPin = cs;
+    function constructor(spiPin, vref, cs=null) { 
+        _spiPin = spiPin; // assume it's already been configured 
+        _vref = vref;
+        _csPin = cs;
 
-		if (_csPin) {
-			_csPin.configure(DIGITAL_OUT, 1);
-		}
-		
-		this._vref = vref;
-	}
+        if (_csPin) {
+            _csPin.configure(DIGITAL_OUT, 1);
+        }
+    }
 	
-	function readADC(channel) {
-		_csLow();
+
+    function readADC(channel) {
+        _csLow();
 		
-    		// 3 byte command
-    		local sent = blob();
-		// for single, bit after start bit is a 1
-    		sent.writen(0x06 | (channel >> 2), 'b'); 
-    		sent.writen((channel << 6) & 0xFF, 'b');
-    		sent.writen(0, 'b');
+        // 3 byte command
+        local sent = blob();
+        // Need to write a start bit as well as a bit following the start bit
+	// to indicate single mode. Thus, we write 0x06
+        sent.writen(0x06 | (channel >> 2), 'b'); 
+        sent.writen((channel << 6) & 0xFF, 'b');
+        sent.writen(0, 'b');
         
-    		local read = _spiPin.writeread(sent);
-
-    		
-			_csHigh();
-
-    		// Extract reading as volts
-    		return ((((read[1] & 0x0f) << 8) | read[2]) / MCP3208_ADC_MAX) * _vref;
-	}
+        local read = _spiPin.writeread(sent);
+        	
+        _csHigh();
+      
+        // Extract reading as volts
+        return ((((read[1] & 0x0F) << 8) | read[2]) / MCP3208_ADC_MAX) * _vref;
+    }
 	
-	function readDifferential(in_minus, in_plus) {
-		_csLow();
+    function readDifferential(in_minus, in_plus) {
+        _csLow();
+      
+        local select = in_plus; // datasheet
+		
+        // 3 byte command 
+        local sent = blob();
+        // for differential, bit after start bit is a 0, so we write 0x04
+        sent.writen(0x04 | (select >> 2), 'b'); 
+        sent.writen((select << 6) & 0xFF, 'b');
+        sent.writen(0, 'b');
 	    
-		local select = in_plus; // datasheet
-		
-		// 3 byte command 
-		local sent = blob();
-		// for differential, bit after start bit is a 0
-		sent.writen(0x04 | (select >> 2), 'b'); 
-    		sent.writen((select << 6) & 0xFF, 'b');
-    		sent.writen(0, 'b');
-	    
-		local read = _spiPin.writeread(sent);
-		
-		_csHigh();
-		
-		// Extract reading as volts 
-		return ((((read[1] & 0x0f) << 8) | read[2]) / MCP3208_ADC_MAX) * _vref;
-	}
+        local read = _spiPin.writeread(sent);
+      
+        _csHigh();
+
+        // Extract reading as volts 
+        return ((((read[1] & 0x0F) << 8) | read[2]) / MCP3208_ADC_MAX) * _vref;
+    }
 	
-	function _csLow() {
-		if(_csPin == null) { 
-			// if no cs was passed, assume there is a hardware cs pin
-			_spiPin.chipselect(1);
-		} else {
-			_csPin.write(0);
-		}
-	}
+    function _csLow() {
+        if (_csPin == null) { 
+            // if no cs was passed, assume there is a hardware cs pin
+            _spiPin.chipselect(1);
+        } else {
+            _csPin.write(0);
+        }
+    }
 	
-	function _csHigh() {
-		if(_csPin == null) {
-			_spiPin.chipselect(0);
-		} else {
-			_csPin.write(1);
-		}
-	}
+    function _csHigh() {
+        if (_csPin == null) {
+            _spiPin.chipselect(0);
+        } else {
+            _csPin.write(1);
+        }
+    }
 }
