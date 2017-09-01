@@ -25,38 +25,23 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ***/
 
+// Tests written for Imp 005 with ADC connected to spiBCAD
+
 class MyTestCase extends ImpTestCase {
     
     _adc = null;
-    _vref = 0;
+    _vref = null;
 
-    function testWrongParameterToFunction() {
-        local spi = hardware.spi0;
-        spi.configure(USE_CS_L | CLOCK_IDLE_LOW | MSB_FIRST, 50);
-        _adc = MCP3208(spi, 3.3);
+    function setUp() {
+        local spi = hardware.spiBCAD;
+        local cs = hardware.pinD;
+        spi.configure(CLOCK_IDLE_LOW | MSB_FIRST, 50);
         _vref = 3.3;
-        for(local i = 10; i < 20; ++i) {
-            local read = _adc.readADC(10);
-            this.info(format("incorrect input to readADC yielded value %f", read));
-            this.assertBetween(read, 0, _vref);
-        }
+        _adc = MCP3208(spi, _vref, cs);
     }
 
-    function testValue() {
-        local spi = hardware.spi0;
-        spi.configure(USE_CS_L | CLOCK_IDLE_LOW | MSB_FIRST, 50);
-        _adc = MCP3208(spi, 3.3);
-        _vref = 3.3;
-        local vals = array(8);
-        for(local i = 0; i < 8; ++i) {
-            vals[i] = _adc.readADC(i);
-        }
-        for(local i = 0; i < 8; ++i) {
-            this.assertBetween(vals[i], 0, _vref);
-        }
-    }
-    
-    function read(_adc, chan, ref, startTime, resolve, reject) {
+    // Helper read function
+    function takeADCReading(_adc, chan, ref, startTime, resolve, reject) {
         this.info("I'm starting at " + startTime);
         local read = _adc.readADC(chan);
         if(read >= 0 && read <= ref) {
@@ -68,16 +53,30 @@ class MyTestCase extends ImpTestCase {
         }
     }
 
+    function testWrongParameterToFunction() {
+        for(local i = 10; i < 20; ++i) {
+            local read = _adc.readADC(10);
+            this.info(format("incorrect input to readADC yielded value %f", read));
+            this.assertBetween(read, 0, _vref);
+        }
+    }
+
+    function testValue() {
+        local vals = array(8);
+        for(local i = 0; i < 8; ++i) {
+            vals[i] = _adc.readADC(i);
+        }
+        for(local i = 0; i < 8; ++i) {
+            this.assertBetween(vals[i], 0, _vref);
+        }
+    }
+
     function testAsynchronous() {
-        local spi = hardware.spi0;
-        spi.configure(USE_CS_L | CLOCK_IDLE_LOW | MSB_FIRST, 50);
-        _adc = MCP3208(spi, 3.3);
-        _vref = 3.3;
         local th = this;
         local series = [
-            @() Promise(@(resolve, reject) th.read(th._adc, MCP3208_CHANNEL_1, th._vref,
+            @() Promise(@(resolve, reject) th.takeADCReading(th._adc, MCP3208_CHANNEL_1, th._vref,
             hardware.micros(), resolve, reject)),
-            @() Promise(@(resolve, reject) th.read(th._adc, MCP3208_CHANNEL_0, th._vref,
+            @() Promise(@(resolve, reject) th.takeADCReading(th._adc, MCP3208_CHANNEL_0, th._vref,
             hardware.micros(), resolve, reject))
         ];
 
@@ -92,10 +91,12 @@ class MyTestCase extends ImpTestCase {
     
     function testUnInitialized() {
         local spi = hardware.spi0;
-        local _adc = MCP3208(spi, 3.3);
-        _vref = 3.3;
-        local read = _adc.readADC(MCP3208_CHANNEL_0);
-        this.info("unitialized read a value of: " + read);
-        this.assertBetween(read, 0, _vref);
+        local UITest_adc = MCP3208(spi, _vref);
+        local read;
+        try {
+            read = UITest_adc.readADC(MCP3208_CHANNEL_0);
+        } catch (e) {
+            return "Unitialized read threw error: " + e;
+        }
     }
 }
