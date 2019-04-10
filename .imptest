@@ -1,7 +1,7 @@
 {
-    "modelId": "RalKIUP6iyKY" /* ADCTest */,
+    "modelId": "Xj-yNZibO5M-" /* M test model */,
     "devices": [
-        "5000d8c46a56dc34" /* 5000d8c46a56dc34 */
+        "500098f1706fd382" /* M 005 with adc on spiBCAD */
     ],
     "agentFile": false,
     "deviceFile": "MCP3208.device.lib.nut",
